@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://hulijuli.com/</loc><lastmod>2026-11-07</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://hulijuli.com/oferta.html</loc><lastmod>2026-11-07</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://hulijuli.com/privacy.html</loc><lastmod>2026-11-07</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://hulijuli.com/</loc><lastmod>2026-11-07</lastmod><priority>1.0</priority></url>
+  <url><loc>https://hulijuli.com/oferta.html</loc><lastmod>2026-11-07</lastmod><priority>0.3</priority></url>
+  <url><loc>https://hulijuli.com/privacy.html</loc><lastmod>2026-11-07</lastmod><priority>0.3</priority></url>
+  <url><loc>https://hulijuli.com/blog/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hulijuli.com/blog/kak-snimat-reels-na-telefon/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hulijuli.com/blog/montazh-v-capcut-dlya-nachinayushchih/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hulijuli.com/blog/neyroseti-dlya-blogera/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hulijuli.com/blog/upakovka-profilya-instagram/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hulijuli.com/blog/kak-nachat-blog-s-nulya/</loc><lastmod>2026-11-07</lastmod><priority>0.7</priority></url>
 </urlset>
