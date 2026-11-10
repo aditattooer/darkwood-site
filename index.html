@@ -64,9 +64,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* HERO */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;padding-top:100px}
-.hero-fog{position:absolute;inset:0;pointer-events:none;opacity:.55}
+.hero-fog{position:absolute;inset:0;pointer-events:none}
 .hero-fog svg{width:100%;height:100%;display:block}
-.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 70% 0%,rgba(52,72,60,.22),transparent 60%);pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,27,25,.55) 0%,rgba(25,27,25,0) 30%,rgba(25,27,25,0) 70%,rgba(32,34,32,.85) 100%);pointer-events:none}
 .hero .wrap{position:relative;z-index:2;width:100%}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:clamp(28px,6vh,64px)}
 .hero-top p{max-width:400px;font-size:clamp(15px,1.25vw,18px);color:rgba(240,237,230,.82);font-weight:300}
@@ -186,6 +186,53 @@ section{position:relative}
 .faq-list summary::after{content:"+";font-family:var(--sans);font-weight:300;font-size:26px;color:var(--muted);transition:transform .3s}
 .faq-list details[open] summary::after{transform:rotate(45deg)}
 .faq-list details p{padding:0 0 28px;max-width:720px;color:rgba(240,237,230,.78);font-weight:300}
+
+/* compact layout */
+.sec{padding:clamp(64px,8vw,120px) 0}
+.sec-head{margin-bottom:clamp(34px,4.5vw,60px)}
+.who{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.who>div{padding:28px 26px 30px 0;border-bottom:1px solid var(--line)}
+.who>div+div{padding-left:26px;border-left:1px solid var(--line)}
+.who .num{font-size:12px;letter-spacing:.16em;color:var(--muted)}
+.who h3{font-family:var(--serif);font-weight:500;font-size:clamp(26px,2.3vw,34px);line-height:1.05;margin:16px 0 10px}
+.who p{color:rgba(240,237,230,.72);font-weight:300;font-size:15px}
+.more{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:26px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);transition:color .25s}
+.more:hover{color:var(--milk)}
+@media(max-width:900px){.who{grid-template-columns:1fr 1fr}.who>div:nth-child(3){border-left:0;padding-left:0}}
+@media(max-width:560px){.who{grid-template-columns:1fr 1fr}.who>div{padding:20px 14px 22px 0!important}.who>div:nth-child(even){padding-left:14px!important;border-left:1px solid var(--line)!important}.who>div:nth-child(odd){border-left:0!important}.who h3{font-size:22px;margin:10px 0 6px}.who p{font-size:13px}}
+.forest{height:clamp(320px,48vh,480px)!important}
+.modules{display:grid;grid-template-columns:1fr 1fr;border-top:0}
+.module{grid-template-columns:1fr!important;gap:10px!important;padding:28px 30px 30px 0!important;border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.module:nth-child(even){padding-left:30px!important;border-left:1px solid var(--line)}
+.module .mid{display:flex;align-items:baseline;gap:16px}
+.module h3{font-size:clamp(36px,3.4vw,52px)!important}
+.module .count{margin-top:0!important}
+.module ol{columns:2!important}
+.module li{padding:6px 0!important;font-size:15px}
+@media(max-width:900px){.modules{grid-template-columns:1fr}.module:nth-child(even){padding-left:0!important;border-left:0}}
+details.terms{display:block!important;margin-top:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+details.terms summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;padding:22px 0;font-family:var(--serif);font-size:clamp(24px,2.4vw,32px);font-weight:500}
+details.terms summary::-webkit-details-marker{display:none}
+details.terms summary span{font-family:var(--sans);font-weight:300;color:var(--muted);transition:transform .3s}
+details.terms[open] summary span{transform:rotate(45deg)}
+details.terms .terms-list{margin-bottom:24px}
+.arts{margin-top:44px}
+.arts>div{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.arts a{padding:10px 18px;border:1px solid var(--line);border-radius:999px;font-size:14px;transition:border-color .25s,background .25s}
+.arts a:hover{border-color:var(--milk);background:rgba(240,237,230,.05)}
+footer{position:relative;padding-top:0!important}
+.foot-forest{display:block;width:100%;height:clamp(120px,14vw,220px);margin-bottom:clamp(40px,6vw,80px)}
+
+.sec{padding:clamp(48px,6vw,90px) 0}
+.sec-head{margin-bottom:clamp(26px,3vw,40px);align-items:end}
+.sec-head h2{font-size:clamp(34px,3.8vw,56px)!important}
+.sec-head p{margin-top:12px!important}
+#faq .faq-list summary{padding:18px 0;font-size:clamp(20px,1.9vw,26px)}
+.plan{padding:32px 30px 30px!important}
+.plan h3{margin:20px 0 4px!important}
+.plan .tagline{min-height:0!important;font-size:18px!important}
+.price{margin:18px 0 6px!important}
+.price-note{margin-bottom:18px!important}
 /* FOOTER */
 footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;overflow:hidden}
 .foot-cta{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:clamp(60px,9vw,120px)}
@@ -249,7 +296,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
   <div class="wrap">
     <a href="#top" class="logo">DARK WOOD <svg class="star"><use href="#s"/></svg></a>
     <nav class="nav-links">
-      <a href="#skills">Навыки</a>
+      <a href="#for">Для кого</a>
       <a href="#program">Программа</a>
       <a href="#pricing">Тарифы</a>
       <a href="/blog/">Статьи</a>
@@ -265,14 +312,44 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
 <section class="hero" id="top">
   <div class="hero-fog" aria-hidden="true">
     <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-      <filter id="fog" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency=".0028 .006" numOctaves="4" seed="7">
-          <animate attributeName="baseFrequency" dur="60s" values=".0028 .006;.0032 .0068;.0028 .006" repeatCount="indefinite"/>
-        </feTurbulence>
-        <feColorMatrix values="0 0 0 0 .94  0 0 0 0 .93  0 0 0 0 .9  0 0 0 .55 -.18"/>
-      </filter>
-      <rect width="100%" height="100%" filter="url(#fog)" opacity=".38"/>
-      <g id="heroPines" fill="#2a2e2b" opacity=".55"></g>
+      <defs>
+        <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#191b19"/><stop offset=".45" stop-color="#2c3430"/><stop offset=".6" stop-color="#46524c"/><stop offset=".61" stop-color="#3a4440"/><stop offset="1" stop-color="#141614"/>
+        </linearGradient>
+        <linearGradient id="hMist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#d9ddd3" stop-opacity="0"/><stop offset=".5" stop-color="#d9ddd3" stop-opacity=".28"/><stop offset="1" stop-color="#d9ddd3" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="hWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#202220" stop-opacity=".15"/><stop offset=".55" stop-color="#1a1c1a" stop-opacity=".7"/><stop offset="1" stop-color="#141614" stop-opacity=".97"/>
+        </linearGradient>
+        <filter id="hRipple" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".0015 .09" numOctaves="2" seed="4" result="t">
+            <animate attributeName="baseFrequency" dur="14s" values=".0015 .09;.0018 .1;.0015 .09" repeatCount="indefinite"/>
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+          <feGaussianBlur stdDeviation="1.2"/>
+        </filter>
+        <filter id="fog" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".0028 .006" numOctaves="4" seed="7">
+            <animate attributeName="baseFrequency" dur="60s" values=".0028 .006;.0032 .0068;.0028 .006" repeatCount="indefinite"/>
+          </feTurbulence>
+          <feColorMatrix values="0 0 0 0 .94  0 0 0 0 .93  0 0 0 0 .9  0 0 0 .55 -.18"/>
+        </filter>
+        <filter id="hGrain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0"/></filter>
+      </defs>
+      <rect width="1440" height="900" fill="url(#hSky)"/>
+      <g id="hFar" fill="#66726b" opacity=".6"></g>
+      <rect y="380" width="1440" height="220" fill="url(#hMist)"/>
+      <g id="hMid" fill="#3e4a44" opacity=".9"></g>
+      <rect y="470" width="1440" height="120" fill="url(#hMist)" opacity=".8"/>
+      <g id="hNear" fill="#1c2420"></g>
+      <g transform="translate(0,1088) scale(1,-1)" filter="url(#hRipple)" opacity=".55">
+        <use href="#hFar"/><use href="#hMid"/><use href="#hNear"/>
+      </g>
+      <rect y="544" width="1440" height="356" fill="url(#hWater)"/>
+      <rect y="530" width="1440" height="40" fill="url(#hMist)" opacity=".9"/>
+      <rect width="1440" height="900" filter="url(#fog)" opacity=".28"/>
+      <rect width="1440" height="900" filter="url(#hGrain)"/>
     </svg>
   </div>
   <div class="wrap">
@@ -291,37 +368,22 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
   </div>
 </section>
 
-<!-- 02 SKILLS -->
-<section class="sec" id="skills">
+<!-- 02 FOR WHOM -->
+<section class="sec" id="for">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="label">02 / Навыки</span>
+      <span class="label">02 / Для кого</span>
       <div>
-        <h2>Навыки, которые работают на тебя.</h2>
-        <p>От первых кадров до готового проекта. Шесть направлений обучения и библиотека творческих инструментов, которые помогут тебе создавать контент самостоятельно, развивать свой блог или бренд и осваивать новые навыки.</p>
+        <h2>Для тех, кто хочет создавать сам.</h2>
       </div>
     </div>
-
-    <div class="skills">
-      <div class="skill rv"><span class="num">01</span><h3>Съёмка</h3><p>Свет, ракурсы, композиция. Выразительные кадры даже на телефон.</p></div>
-      <div class="skill rv"><span class="num">02</span><h3>Монтаж</h3><p>CapCut, ритм, переходы, звук и динамичные видео.</p></div>
-      <div class="skill rv"><span class="num">03</span><h3>Визуал</h3><p>Цвет, шрифты, коллажи и стильное оформление.</p></div>
-      <div class="skill rv"><span class="num">04</span><h3>Нейросети</h3><p>AI для идей, визуальных решений и творческих задач.</p></div>
-      <div class="skill rv"><span class="num">05</span><h3>Ретушь</h3><p>Обработка фото, цветокоррекция и единая эстетика.</p></div>
-      <div class="skill rv"><span class="num">06</span><h3>Контент</h3><p>Аудитория, идеи и контент для продвижения проектов.</p></div>
+    <div class="who">
+      <div class="rv"><span class="num">01</span><h3>Начинающим блогерам</h3><p>Хочешь вести блог, но не знаешь, с чего начать съёмку и монтаж.</p></div>
+      <div class="rv"><span class="num">02</span><h3>Мастерам и экспертам</h3><p>Хочешь красиво показывать свои работы и продвигать услуги.</p></div>
+      <div class="rv"><span class="num">03</span><h3>Будущим креаторам</h3><p>Хочешь снимать Reels и UGC-контент для клиентов.</p></div>
+      <div class="rv"><span class="num">04</span><h3>Тем, кто про ИИ</h3><p>Хочешь использовать нейросети для идей, ретуши и визуала.</p></div>
     </div>
-    <div class="toolkit">
-      <div class="rv">
-        <span class="label">07 / Creator Toolkit</span>
-        <h3>Твоя библиотека творческих инструментов.</h3>
-        <p>Чек-листы, паки шрифтов, звуки для саунд-дизайна и дополнительные материалы для создания контента.</p>
-      </div>
-      <div class="rv">
-        <span class="label bonus-tag"><svg class="star"><use href="#s"/></svg> Бонус</span>
-        <h3>Дополнительный Telegram-канал.</h3>
-        <p>Бессрочный доступ к закрытому каналу, который каждый месяц пополняется новыми инструментами, подборками и полезными материалами для съёмки, монтажа и развития твоего контента.</p>
-      </div>
-    </div>
+    <a class="more rv" href="/navyki/">Съёмка, монтаж, визуал, нейросети, ретушь, контент — что ты освоишь <span>→</span></a>
   </div>
 </section>
 
@@ -350,8 +412,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
     <rect width="1440" height="820" fill="url(#shade)"/>
     <rect width="1440" height="820" filter="url(#grain)"/>
   </svg>
-  <div class="wrap corner"><span class="label">✦ &nbsp;Dark forest × editorial</span></div>
-  <div class="wrap quote rv">
+    <div class="wrap quote rv">
     <h2>Не просто знания. <em>Инструменты для твоих идей.</em></h2>
   </div>
 </section>
@@ -363,7 +424,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
       <span class="label">03 / Программа</span>
       <div>
         <h2>От первого кадра до готового проекта.</h2>
-        <p>22 темы. 4 модуля. Практические инструменты для создания контента — от идеи и съёмки до монтажа и нейросетей.</p>
+        <p>22 темы. 4 модуля.</p>
       </div>
     </div>
 
@@ -389,7 +450,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
         <ol><li><span>01</span>Видеоретушь</li><li><span>02</span>Фоторетушь</li><li><span>03</span>Нейрообработка</li><li><span>04</span>Коллажи и карусели</li></ol>
       </article>
     </div>
-    <div class="program-end rv"><svg class="star"><use href="#s"/></svg> 22 темы. 4 модуля. Одна система творческих навыков.</div>
+    
   </div>
 </section>
 
@@ -400,7 +461,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
       <span class="label">04 / Тарифы</span>
       <div>
         <h2>Выбери свой формат.</h2>
-        <p>22 темы. 4 модуля. CREATOR TOOLKIT. Дополнительный Telegram-канал с ежемесячными обновлениями. Одна программа — три уровня поддержки.</p>
+        <p>Одна программа — три уровня поддержки.</p>
       </div>
     </div>
 
@@ -412,14 +473,12 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
         <div class="price" data-plan="self"></div>
         <div class="price-note">Единоразово</div>
         <ul>
-          <li><svg class="star"><use href="#s"/></svg>Все 22 темы курса</li>
-          <li><svg class="star"><use href="#s"/></svg>4 учебных модуля</li>
-          <li><svg class="star"><use href="#s"/></svg>CREATOR TOOLKIT — библиотека творческих инструментов</li>
-          <li><svg class="star"><use href="#s"/></svg>Дополнительный Telegram-канал с ежемесячными обновлениями</li>
-          <li><svg class="star"><use href="#s"/></svg>Бессрочный доступ ко всем материалам и дополнительному каналу</li>
-          <li><svg class="star"><use href="#s"/></svg>Самостоятельное обучение в закрытом Telegram-канале</li>
+          <li><svg class="star"><use href="#s"/></svg>22 темы в 4 модулях</li>
+          <li><svg class="star"><use href="#s"/></svg>CREATOR TOOLKIT — библиотека инструментов</li>
+          <li><svg class="star"><use href="#s"/></svg>Закрытый Telegram-канал с ежемесячными обновлениями</li>
+          <li><svg class="star"><use href="#s"/></svg>Бессрочный доступ</li>
         </ul>
-        <p class="foot">Без персональных проверок и созвонов.</p>
+        <p class="foot">Без проверок и созвонов.</p>
         <button class="btn" data-buy="self">Начать обучение <span class="arr">→</span></button>
       </div>
 
@@ -431,10 +490,8 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
         <div class="price-note" style="color:rgba(240,237,230,.7)">Единоразово</div>
         <ul style="border-color:rgba(240,237,230,.25)">
           <li><svg class="star"><use href="#s"/></svg>Всё из тарифа SELF</li>
-          <li><svg class="star"><use href="#s"/></svg>3 персональные проверки домашних заданий</li>
-          <li><svg class="star"><use href="#s"/></svg>Индивидуальные рекомендации по улучшению работ</li>
+          <li><svg class="star"><use href="#s"/></svg>3 проверки домашних заданий с рекомендациями</li>
           <li><svg class="star"><use href="#s"/></svg>30 дней обратной связи</li>
-          <li><svg class="star"><use href="#s"/></svg>Бессрочный доступ ко всем материалам и дополнительному каналу</li>
         </ul>
         <button class="btn fill" data-buy="feedback">Учиться с обратной связью <span class="arr">→</span></button>
       </div>
@@ -447,20 +504,18 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
         <div class="price-note">Единоразово</div>
         <ul>
           <li><svg class="star"><use href="#s"/></svg>Всё из тарифа SELF</li>
-          <li><svg class="star"><use href="#s"/></svg>3 персональные проверки домашних заданий</li>
-          <li><svg class="star"><use href="#s"/></svg>2 индивидуальных созвона по 45 минут</li>
+          <li><svg class="star"><use href="#s"/></svg>3 проверки домашних заданий</li>
+          <li><svg class="star"><use href="#s"/></svg>2 созвона в Zoom по 45 минут</li>
           <li><svg class="star"><use href="#s"/></svg>30 дней персонального сопровождения</li>
           <li><svg class="star" style="color:var(--wine)"><use href="#s"/></svg><span class="special">SPECIAL BONUS</span></li>
-          <li><svg class="star"><use href="#s"/></svg>Бессрочный доступ ко всем материалам и дополнительному каналу</li>
         </ul>
         <button class="btn" data-buy="mentor">Выбрать наставничество <span class="arr">→</span></button>
       </div>
     </div>
 
-    <div class="terms">
-      <span class="label rv">Условия обучения</span>
-      <div class="rv">
-        <h3>Условия обучения.</h3>
+    <details class="terms rv">
+      <summary>Условия обучения <span>+</span></summary>
+      <div>
         <div class="terms-list">
           <div><span class="n">01</span>Оплата единоразовая, без подписки.</div>
           <div><span class="n">02</span>Все три тарифа включают бессрочный доступ к 22 темам курса, библиотеке CREATOR TOOLKIT и дополнительному Telegram-каналу.</div>
@@ -471,46 +526,50 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
           <div><span class="n">07</span><span><b style="font-weight:500;color:var(--milk)">Оплата не возвращается:</b> сразу после оплаты открывается полный доступ ко всем материалам курса.</span></div>
         </div>
       </div>
-    </div>
+    </details>
   </div>
 </section>
 
 <!-- FAQ -->
 <section class="sec" id="faq" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head rv">
-      <span class="label">05 / Вопросы</span>
-      <div><h2>Частые вопросы.</h2></div>
-    </div>
+    <span class="label" style="display:block;margin-bottom:10px">05 / Вопросы</span>
     <div class="faq-list rv">
-        <details><summary>Для кого курс DARK WOOD?</summary><p>Для тех, кто хочет научиться создавать контент с нуля: для своего блога, личного бренда, бизнеса или будущих клиентов. Подойдёт начинающим блогерам, экспертам, мастерам и всем, кто хочет освоить съёмку, монтаж и нейросети.</p></details>
         <details><summary>Нужен ли опыт или дорогая техника?</summary><p>Нет. Обучение начинается с базы, а снимать выразительные кадры можно даже на телефон.</p></details>
-        <details><summary>Чему я научусь на курсе?</summary><p>Упаковке профиля и работе с целевой аудиторией, визуалу и сторис, съёмке (свет, композиция, звук, переходы), монтажу Reels и коротких видео в CapCut (маски, ключи, текст, музыка, эффекты), а также ретуши фото и видео с помощью нейросетей, коллажам и каруселям.</p></details>
         <details><summary>Как проходит обучение?</summary><p>Все 22 темы курса находятся в закрытом Telegram-канале. Учиться можно в своём ритме. В тарифах FEEDBACK и MENTOR есть проверки домашних заданий, а в MENTOR — индивидуальные созвоны в Zoom.</p></details>
         <details><summary>Сколько действует доступ?</summary><p>Доступ к материалам курса, библиотеке CREATOR TOOLKIT и дополнительному каналу — бессрочный. Персональная поддержка в тарифах FEEDBACK и MENTOR — 30 дней.</p></details>
         <details><summary>Можно ли оплатить из-за рубежа?</summary><p>Да. На сайте можно оплатить в рублях картой российского банка или в валюте картой иностранного банка.</p></details>
     </div>
-    <div class="rv" style="margin-top:70px"><span class="label">Бесплатно / Статьи</span><div style="margin-top:18px;border-top:1px solid var(--line)"><a href="/blog/kak-snimat-reels-na-telefon/" style="display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--serif);font-size:clamp(20px,2vw,26px)">Как снимать Reels на телефон: свет, ракурсы и композиция <span style="color:var(--muted);font-family:var(--sans);font-size:14px">→</span></a><a href="/blog/montazh-v-capcut-dlya-nachinayushchih/" style="display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--serif);font-size:clamp(20px,2vw,26px)">Монтаж в CapCut для начинающих: маски, ключевые кадры и переходы <span style="color:var(--muted);font-family:var(--sans);font-size:14px">→</span></a><a href="/blog/neyroseti-dlya-blogera/" style="display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--serif);font-size:clamp(20px,2vw,26px)">Нейросети для блогера: идеи, сценарии и ретушь <span style="color:var(--muted);font-family:var(--sans);font-size:14px">→</span></a><a href="/blog/upakovka-profilya-instagram/" style="display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--serif);font-size:clamp(20px,2vw,26px)">Упаковка профиля в Instagram: шапка, визуал и актуальное <span style="color:var(--muted);font-family:var(--sans);font-size:14px">→</span></a><a href="/blog/kak-nachat-blog-s-nulya/" style="display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--serif);font-size:clamp(20px,2vw,26px)">Как начать блог с нуля: план на первый месяц <span style="color:var(--muted);font-family:var(--sans);font-size:14px">→</span></a></div></div>
+    <div class="arts rv"><span class="label">Бесплатно / Статьи</span><div>
+      <a href="/blog/kak-snimat-reels-na-telefon/">Как снимать Reels на телефон</a>
+      <a href="/blog/montazh-v-capcut-dlya-nachinayushchih/">Монтаж в CapCut</a>
+      <a href="/blog/neyroseti-dlya-blogera/">Нейросети для блогера</a>
+      <a href="/blog/upakovka-profilya-instagram/">Упаковка профиля</a>
+      <a href="/blog/kak-nachat-blog-s-nulya/">Блог с нуля</a>
+      <a href="/blog/">Все статьи →</a>
+    </div></div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
+  <svg class="foot-forest" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs><linearGradient id="fMist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#202220" stop-opacity="1"/><stop offset=".6" stop-color="#cfd3c8" stop-opacity=".10"/><stop offset="1" stop-color="#202220" stop-opacity="0"/></linearGradient></defs>
+    <g id="fFar" fill="#3a443f" opacity=".7"></g>
+    <rect width="1440" height="220" fill="url(#fMist)" opacity=".6"/>
+    <g id="fNear" fill="#181c1a"></g>
+  </svg>
   <div class="wrap">
-    <div class="foot-cta rv">
-      <h2>Контент.<br>С нуля.</h2>
-      <a href="#pricing" class="btn fill">Выбрать тариф <span class="arr">→</span></a>
-    </div>
-    <div class="foot-word" aria-hidden="true">DARK WOOD</div>
-    <div class="foot-bottom">
-      <span>© DARK WOOD, 2026 · Ткаченко Юлия Александровна, самозанятая, ИНН 242023983383</span>
+    
+        <div class="foot-bottom">
+      <span>© DARK WOOD, 2026 · ИНН 242023983383</span>
       <div class="foot-links">
         <a href="/blog/">Статьи</a>
         <a href="oferta.html">Публичная оферта</a>
         <a href="privacy.html">Политика конфиденциальности</a>
         <a href="mailto:on21.tattoo@gmail.com">on21.tattoo@gmail.com</a>
         <a href="https://t.me/huli_juli">Telegram</a>
-        <a href="#" data-todo>Instagram</a>
+        <a href="https://www.instagram.com/hulijuli_/" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
   </div>
@@ -701,7 +760,22 @@ function pines(id, base, minH, maxH, step, seed, W){
 pines("ridge1", 470, 90, 170, 26, 11, 1440);
 pines("ridge2", 590, 170, 300, 46, 29, 1440);
 pines("ridge3", 760, 320, 560, 90, 53, 1440);
-pines("heroPines", 920, 120, 260, 70, 17, 1440);
+function ridge(id, base, minH, maxH, step, seed){
+  const g=document.getElementById(id); if(!g) return; const r=rnd(seed); let d="";
+  for(let x=-40;x<1480;x+=step*(0.55+r()*0.9)){
+    const h=minH+r()*(maxH-minH), w=h*(0.17+r()*0.06), yb=base+r()*4, tiers=7; let p=`M${x},${yb-h}`;
+    for(let i=1;i<=tiers;i++){const t=i/tiers,y=yb-h+h*t,hw=w*t; p+=` L${x+hw},${y} L${x+hw*.55},${y-h*.02}`;}
+    for(let i=tiers;i>=1;i--){const t=i/tiers,y=yb-h+h*t,hw=w*t; p+=` L${x-hw*.55},${y-h*.02} L${x-hw},${y}`;}
+    d+=p+" Z ";
+  }
+  d+=`M-50,${base-2} H1490 V${base+6} H-50 Z`;
+  const p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); g.appendChild(p);
+}
+ridge("hFar", 540, 70, 150, 20, 7);
+ridge("hMid", 542, 120, 250, 34, 19);
+ridge("hNear", 544, 190, 380, 64, 41);
+ridge("fFar", 222, 60, 140, 26, 61);
+ridge("fNear", 224, 90, 210, 48, 83);
 </script>
 </body>
 </html>
