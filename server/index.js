@@ -8,14 +8,15 @@
 //   YK_SHOP_ID, YK_SECRET           — магазин ЮKassa (секретный ключ вводится только в консоли)
 //   RECEIPT                         — "npd" (чеки самозанятого от ЮKassa) или "none"
 //   TG_TOKEN                        — токен бота от @BotFather
-//   TG_SECRET                       — любая длинная строка, защищает вебхук бота
 //   BOT_USERNAME                    — имя бота без @
 //   ADMIN_CHAT_ID                   — чат Юли (куда приходят покупки, ДЗ и вопросы)
 //   CHANNEL_MAIN                    — id закрытого канала курса (-100...)
-//   SHEET_URL, SHEET_KEY            — веб-приложение Google Apps Script и его ключ
+//   SHEET_URL                       — адрес веб-приложения Google Apps Script
+//   FUNC_URL                        — адрес этой функции (для подключения вебхука бота: ?r=setup)
 //   SITE_URL                        — https://hulijuli.com
 
 const E = process.env;
+const TG_SECRET = () => require('crypto').createHash('sha256').update('dw:' + (E.TG_TOKEN || '')).digest('hex').slice(0, 48);
 const SITE = E.SITE_URL || 'https://hulijuli.com';
 
 const PLANS = {
@@ -78,7 +79,7 @@ async function sheet(action, data = {}) {
   try {
     const r = await fetch(E.SHEET_URL, {
       method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ key: E.SHEET_KEY, action, ...data }),
+      body: JSON.stringify({ action, ...data }),
     });
     return await r.json();
   } catch (e) { console.log('sheet error', action, e.message); return { error: e.message }; }
@@ -181,7 +182,7 @@ async function issueAccess(chatId, from, pid) {
 }
 
 async function telegramHook(event) {
-  if (E.TG_SECRET && (event.headers?.['X-Telegram-Bot-Api-Secret-Token'] || event.headers?.['x-telegram-bot-api-secret-token']) !== E.TG_SECRET) return reply(403, {});
+  if ((event.headers?.['X-Telegram-Bot-Api-Secret-Token'] || event.headers?.['x-telegram-bot-api-secret-token']) !== TG_SECRET()) return reply(403, {});
   const u = parseBody(event);
   const msg = u.message;
   if (!msg) return reply(200, {});
@@ -260,6 +261,11 @@ module.exports.handler = async function (event) {
     if (r === 'pay' && event.httpMethod === 'POST') return await createPayment(event);
     if (r === 'yk') return await yookassaHook(event);
     if (r === 'tg') return await telegramHook(event);
+    if (r === 'setup') {                                   // подключает вебхук бота; секрет выводится из токена
+      const w = await tg('setWebhook', { url: `${E.FUNC_URL}?r=tg`, secret_token: TG_SECRET(), allowed_updates: ['message'], drop_pending_updates: true });
+      await tg('setMyCommands', { commands: [{ command: 'start', description: 'Меню курса' }] });
+      return reply(200, { webhook: w.ok ? 'подключён' : w.description, yookassa_shop: E.YK_SHOP_ID || 'не задан', sheet: E.SHEET_URL ? 'задана' : 'не задана', admin: E.ADMIN_CHAT_ID || 'не задан', channel: E.CHANNEL_MAIN || 'не задан' });
+    }
     return reply(200, { ok: true, service: 'darkwood' });
   } catch (e) {
     console.log('fatal', e.stack || e.message);

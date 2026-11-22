@@ -1,12 +1,12 @@
-// DARK WOOD — приёмник для Google Таблицы (Apps Script, привязан к таблице)
-// Свойство скрипта KEY должно совпадать с переменной SHEET_KEY на сервере.
+// DARK WOOD — приёмник для Google Таблицы «DARK WOOD — покупки» (Apps Script)
+// Адрес веб-приложения знает только сервер (переменная SHEET_URL).
 // Лист «Покупки» создаётся автоматически.
 
 const HEAD = ['Дата', 'ID платежа', 'Тариф', 'Обратная связь', 'Сумма, ₽', 'Промокод', 'Откуда пришёл', 'Email', 'Telegram (указал)', 'TG ID', 'TG username', 'Доступ выдан', 'ДЗ сдано'];
 const C = { date: 1, id: 2, plan: 3, feedback: 4, amount: 5, promo: 6, source: 7, email: 8, tg: 9, tg_id: 10, tg_user: 11, issued: 12, hw: 13 };
 
 function sh_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = SpreadsheetApp.openById('1HPk88z-x5Eisy0UqSvA77s1b7MeI3-YmMn-cBUMuUZg');
   let s = ss.getSheetByName('Покупки');
   if (!s) {
     s = ss.insertSheet('Покупки');
@@ -29,7 +29,6 @@ const out_ = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType
 
 function doPost(e) {
   const d = JSON.parse(e.postData.contents || '{}');
-  if (d.key !== PropertiesService.getScriptProperties().getProperty('KEY')) return out_({ error: 'forbidden' });
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
     const s = sh_();
