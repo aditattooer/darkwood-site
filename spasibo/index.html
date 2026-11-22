@@ -27,7 +27,7 @@
   <small>Если кнопка не сработала: открой бота <span id="botName"></span>, нажми «🔑 Доступ к курсу» и напиши email, который указывал(а) при оплате. Чек об оплате придёт на почту.</small>
 </main>
 <script>
-const BOT = "";   /* имя бота без @, например darkwood_course_bot */
+const BOT = "dark_wood1_bot";   /* имя бота без @, например darkwood_course_bot */
 let pid = ""; try { pid = localStorage.getItem("dw-pid") || ""; } catch (e) {}
 const a = document.getElementById("botLink");
 if (BOT) { a.href = "https://t.me/" + BOT + (pid ? "?start=" + encodeURIComponent(pid) : ""); document.getElementById("botName").textContent = "@" + BOT; }
