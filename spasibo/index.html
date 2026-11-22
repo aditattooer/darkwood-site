@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Спасибо за оплату — DARK WOOD</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/blog/blog.css">
+<style>
+.ty{max-width:680px;margin:0 auto;padding:clamp(70px,12vw,140px) clamp(20px,5vw,40px);text-align:left}
+.ty h1{font-family:var(--serif);font-weight:500;font-size:clamp(48px,8vw,92px);line-height:.95;margin:18px 0 22px;letter-spacing:-.02em}
+.ty p{color:rgba(240,237,230,.82);margin-bottom:16px}
+.ty .btn{margin-top:18px}
+.ty small{display:block;margin-top:26px;color:var(--muted);font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<header class="top"><a href="/" class="logo">DARK WOOD ✦</a><nav><a href="/blog/">Статьи</a></nav></header>
+<main class="ty">
+  <span class="label">✦ Оплата</span>
+  <h1>Спасибо. Добро пожаловать в лес.</h1>
+  <p>Последний шаг — открой бота курса. Он проверит оплату и сразу выдаст личные ссылки на закрытые каналы DARK WOOD 🖤</p>
+  <a class="btn" id="botLink" href="#">Получить доступ в Telegram →</a>
+  <small>Если кнопка не сработала: открой бота <span id="botName"></span>, нажми «🔑 Доступ к курсу» и напиши email, который указывал(а) при оплате. Чек об оплате придёт на почту.</small>
+</main>
+<script>
+const BOT = "";   /* имя бота без @, например darkwood_course_bot */
+let pid = ""; try { pid = localStorage.getItem("dw-pid") || ""; } catch (e) {}
+const a = document.getElementById("botLink");
+if (BOT) { a.href = "https://t.me/" + BOT + (pid ? "?start=" + encodeURIComponent(pid) : ""); document.getElementById("botName").textContent = "@" + BOT; }
+</script>
+</body>
+</html>

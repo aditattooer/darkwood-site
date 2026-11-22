@@ -246,6 +246,11 @@ footer{position:relative;padding-top:0!important}
 .old-row{display:flex;align-items:center;gap:12px;font-family:var(--sans);font-size:15px;margin-bottom:8px;letter-spacing:.02em}
 .old-row s{color:rgba(240,237,230,.5);text-decoration-thickness:1px}
 .old-row b{font-weight:600;font-size:11px;letter-spacing:.14em;padding:4px 9px;border-radius:999px;background:var(--wine);color:var(--milk)}
+.buyer{display:grid;gap:8px;margin:0 0 14px}
+.buyer input{background:transparent;border:1px solid var(--line);color:var(--milk);font:inherit;font-size:14px;padding:13px 16px;outline:none}
+.buyer input:focus{border-color:var(--milk)}
+.buyer input::placeholder{color:var(--muted)}
+.pay-opt[disabled]{opacity:.6;pointer-events:none}
 /* FOOTER */
 footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;overflow:hidden}
 .foot-cta{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:clamp(60px,9vw,120px)}
@@ -616,16 +621,20 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
       <button type="submit">Применить</button>
     </form>
     <div class="promo-msg" id="promoMsg" aria-live="polite"></div>
+    <div class="buyer">
+      <input id="buyEmail" type="email" placeholder="Email — на него придёт чек" autocomplete="email" required>
+      <input id="buyTg" type="text" placeholder="Telegram @username — по желанию" autocomplete="off" maxlength="40">
+    </div>
     <button class="pay-opt" data-pay="RUB">
-      <div><strong>Карта российского банка</strong><small>Оплата в рублях · МИР, Visa, Mastercard РФ, СБП</small></div>
+      <div><strong>Оплатить</strong><small>Карта российского банка, СБП, SberPay, T-Pay</small></div>
       <span class="amt" id="amtRUB"></span>
     </button>
     <button class="pay-opt" data-pay="USD" hidden style="display:none">
       <div><strong>Иностранная карта</strong><small>Оплата в валюте · Visa, Mastercard, Apple Pay</small></div>
       <span class="amt" id="amtUSD"></span>
     </button>
-    <div class="dlg-msg" id="dlgMsg">Платёжная ссылка для этого способа ещё не подключена.</div>
-    <p class="dlg-note">После оплаты на почту придёт ссылка-приглашение в закрытый Telegram-канал курса. <b style="font-weight:500;color:var(--milk)">Оплата не возвращается</b> — доступ ко всем материалам открывается сразу. Нажимая кнопку оплаты, вы принимаете условия <a href="oferta.html" style="text-decoration:underline">публичной оферты</a> и даёте согласие на обработку персональных данных согласно <a href="privacy.html" style="text-decoration:underline">политике конфиденциальности</a>.</p>
+    <div class="dlg-msg" id="dlgMsg"></div>
+    <p class="dlg-note">После оплаты откроется страница со ссылкой на бота курса — он сразу выдаст доступ к закрытым каналам. <b style="font-weight:500;color:var(--milk)">Оплата не возвращается</b> — доступ ко всем материалам открывается сразу. Нажимая кнопку оплаты, вы принимаете условия <a href="oferta.html" style="text-decoration:underline">публичной оферты</a> и даёте согласие на обработку персональных данных согласно <a href="privacy.html" style="text-decoration:underline">политике конфиденциальности</a>.</p>
   </div>
 </div>
 
@@ -634,6 +643,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
    Цены и платёжные ссылки. USD — черновые значения, уточнить у Юлии.
    В pay вставить ссылки из платёжных сервисов (рубли / валюта).            */
 const CONFIG = {
+  api: "",          /* адрес функции Yandex Cloud, например https://functions.yandexcloud.net/xxxx */
   plans: {
     self:     { name: "SELF",     RUB: 2890,  USD: 35,  old: { RUB: 4130,  USD: 50 },  pay: { RUB: "", USD: "" } },
     feedback: { name: "FEEDBACK", RUB: 5990,  USD: 75,  old: { RUB: 8560,  USD: 107 },  pay: { RUB: "", USD: "" } },
@@ -664,6 +674,14 @@ const fmt = (v, c) => c === "RUB"
   : "$" + v.toLocaleString("en-US", { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 });
 
 let cur = "RUB";
+try {
+  if (!localStorage.getItem("dw-src")) {
+    const q = new URLSearchParams(location.search);
+    let src = q.get("utm_source") || "";
+    if (!src && document.referrer) { try { const h = new URL(document.referrer).hostname.replace(/^www\./, ""); if (!h.endsWith("hulijuli.com")) src = h; } catch (e) {} }
+    localStorage.setItem("dw-src", src || "прямой заход");
+  }
+} catch (e) {}
 /* валюта: пока только рубли */
 
 function renderPrices(){
@@ -738,13 +756,22 @@ document.querySelectorAll("[data-buy]").forEach(b => b.addEventListener("click",
   msg.style.display = "none";
   dlg.classList.add("open");
 }));
-dlg.querySelectorAll(".pay-opt").forEach(o => o.addEventListener("click", () => {
-  const c = o.dataset.pay, on = applies(promo, active);
-  const promoUrl = on && promo.pay && promo.pay[active] ? promo.pay[active][c] : "";
-  const url = promoUrl || CONFIG.plans[active].pay[c];
-  if (url) {
-    location.href = on && !promoUrl ? url + (url.includes("?") ? "&" : "?") + "promo=" + encodeURIComponent(promoCode) : url;
-  } else { msg.style.display = "block"; }
+dlg.querySelectorAll(".pay-opt").forEach(o => o.addEventListener("click", async () => {
+  const email = document.getElementById("buyEmail").value.trim();
+  const tgu = document.getElementById("buyTg").value.trim();
+  const show = t => { msg.textContent = t; msg.style.display = "block"; };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { show("Укажи email — на него придёт чек об оплате."); document.getElementById("buyEmail").focus(); return; }
+  if (!CONFIG.api) { show("Оплата подключается — совсем скоро здесь можно будет купить курс."); return; }
+  o.disabled = true; show("Создаём платёж…");
+  let src = ""; try { src = localStorage.getItem("dw-src") || ""; } catch (e) {}
+  try {
+    const r = await fetch(CONFIG.api + "?r=pay", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: active, promo: applies(promo, active) ? promoCode : "", email, tg: tgu, source: src }) });
+    const j = await r.json();
+    if (!r.ok || !j.url) throw new Error(j.error || "Ошибка");
+    try { localStorage.setItem("dw-pid", j.id); } catch (e) {}
+    location.href = j.url;
+  } catch (e) { show(e.message || "Не получилось создать платёж. Попробуй ещё раз."); o.disabled = false; }
 }));
 const close = () => dlg.classList.remove("open");
 document.getElementById("dlgClose").addEventListener("click", close);
