@@ -5,7 +5,7 @@
 const HEAD = ['Дата', 'ID платежа', 'Тариф', 'Обратная связь', 'Сумма, ₽', 'Промокод', 'Откуда пришёл', 'Email', 'Telegram (указал)', 'TG ID', 'TG username', 'Доступ выдан', 'ДЗ сдано'];
 const C = { date: 1, id: 2, plan: 3, feedback: 4, amount: 5, promo: 6, source: 7, email: 8, tg: 9, tg_id: 10, tg_user: 11, issued: 12, hw: 13 };
 
-function setup() { sh_(); UrlFetchApp.fetch('https://api.telegram.org/'); }
+function setup() { sh_(); UrlFetchApp.fetch('https://api.telegram.org/'); MailApp.getRemainingDailyQuota(); }
 
 function sh_() {
   const ss = SpreadsheetApp.openById('1HPk88z-x5Eisy0UqSvA77s1b7MeI3-YmMn-cBUMuUZg');
@@ -37,6 +37,24 @@ function doPost(e) {
       method: 'post', contentType: 'application/json', payload: JSON.stringify(d.params || {}), muteHttpExceptions: true,
     });
     return ContentService.createTextOutput(r.getContentText()).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (d.action === 'mail') {               // письмо покупателю со ссылкой на бота
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email || '') || !/^https:\/\/t\.me\//.test(d.link || '')) return out_({ ok: false });
+    const plan = String(d.plan || '').replace(/[<>&]/g, '');
+    const html =
+      '<div style="background:#161a18;padding:36px 20px;font-family:Arial,Helvetica,sans-serif;color:#f0ede6">' +
+      '<div style="max-width:520px;margin:0 auto">' +
+      '<div style="letter-spacing:.28em;font-size:12px;color:#9a9f97">DARK WOOD ✦</div>' +
+      '<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:34px;line-height:1.1;margin:18px 0 18px">Добро пожаловать в лес 🖤</h1>' +
+      '<p style="font-size:15px;line-height:1.6;color:#d9d5cc">Оплата прошла. Твой тариф: <b>' + plan + '</b>.</p>' +
+      '<p style="font-size:15px;line-height:1.6;color:#d9d5cc">Последний шаг — открой бота курса. Он выдаст личную ссылку в закрытый канал.</p>' +
+      '<p style="margin:26px 0"><a href="' + d.link + '" style="display:inline-block;background:#f0ede6;color:#161a18;text-decoration:none;padding:14px 26px;font-size:14px;letter-spacing:.08em">ПОЛУЧИТЬ ДОСТУП В TELEGRAM →</a></p>' +
+      '<p style="font-size:13px;line-height:1.6;color:#9a9f97">Если кнопка не открывается: найди в Telegram бота @' + String(d.bot || '').replace(/[^\w]/g, '') + ', нажми «🔑 Доступ к курсу» и напиши этот email.</p>' +
+      '<p style="font-size:13px;line-height:1.6;color:#9a9f97">Вопросы — прямо в боте или в Telegram @huli_juli.<br>Юля 🤍</p>' +
+      '</div></div>';
+    MailApp.sendEmail({ to: d.email, subject: 'DARK WOOD — твой доступ к курсу 🖤', name: 'DARK WOOD',
+      htmlBody: html, body: 'Оплата прошла. Открой бота курса, чтобы получить доступ: ' + d.link });
+    return out_({ ok: true });
   }
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {

@@ -150,6 +150,10 @@ async function yookassaHook(event) {
   const res = await sheet('add', row);
   if (res.duplicate) return reply(200, { ok: true });                     // повторное уведомление
   if (res.error) return reply(500, { error: 'sheet' });                   // ЮKassa повторит уведомление позже
+  if (m.email && E.BOT_USERNAME) {                                         // дублируем ссылку на бота письмом
+    const m2 = await sheet('mail', { email: m.email, plan: plan.name, bot: E.BOT_USERNAME, link: `https://t.me/${E.BOT_USERNAME}?start=${p.id}` });
+    if (!m2.ok) console.log('mail failed', JSON.stringify(m2));
+  }
   if (E.ADMIN_CHAT_ID) {
     await send(E.ADMIN_CHAT_ID,
       `🖤 <b>Новая покупка DARK WOOD</b>\n\n` +
