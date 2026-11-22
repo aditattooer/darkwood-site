@@ -643,7 +643,7 @@ footer{border-top:1px solid var(--line);padding:clamp(70px,10vw,130px) 0 36px;ov
    Цены и платёжные ссылки. USD — черновые значения, уточнить у Юлии.
    В pay вставить ссылки из платёжных сервисов (рубли / валюта).            */
 const CONFIG = {
-  api: "",          /* адрес функции Yandex Cloud, например https://functions.yandexcloud.net/xxxx */
+  api: "https://functions.yandexcloud.net/d4ejebne464cf5dfpcd2",   /* сервер оплаты (Yandex Cloud) */
   plans: {
     self:     { name: "SELF",     RUB: 2890,  USD: 35,  old: { RUB: 4130,  USD: 50 },  pay: { RUB: "", USD: "" } },
     feedback: { name: "FEEDBACK", RUB: 5990,  USD: 75,  old: { RUB: 8560,  USD: 107 },  pay: { RUB: "", USD: "" } },

@@ -5,6 +5,8 @@
 const HEAD = ['Дата', 'ID платежа', 'Тариф', 'Обратная связь', 'Сумма, ₽', 'Промокод', 'Откуда пришёл', 'Email', 'Telegram (указал)', 'TG ID', 'TG username', 'Доступ выдан', 'ДЗ сдано'];
 const C = { date: 1, id: 2, plan: 3, feedback: 4, amount: 5, promo: 6, source: 7, email: 8, tg: 9, tg_id: 10, tg_user: 11, issued: 12, hw: 13 };
 
+function setup() { sh_(); UrlFetchApp.fetch('https://api.telegram.org/'); }
+
 function sh_() {
   const ss = SpreadsheetApp.openById('1HPk88z-x5Eisy0UqSvA77s1b7MeI3-YmMn-cBUMuUZg');
   let s = ss.getSheetByName('Покупки');
@@ -29,6 +31,13 @@ const out_ = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType
 
 function doPost(e) {
   const d = JSON.parse(e.postData.contents || '{}');
+  if (d.action === 'tg') {                 // ретранслятор запросов к Telegram (из Yandex Cloud Telegram недоступен)
+    if (!/^\d+:[\w-]+$/.test(d.token || '') || !/^\w+$/.test(d.method || '')) return out_({ ok: false, description: 'bad request' });
+    const r = UrlFetchApp.fetch('https://api.telegram.org/bot' + d.token + '/' + d.method, {
+      method: 'post', contentType: 'application/json', payload: JSON.stringify(d.params || {}), muteHttpExceptions: true,
+    });
+    return ContentService.createTextOutput(r.getContentText()).setMimeType(ContentService.MimeType.JSON);
+  }
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
     const s = sh_();

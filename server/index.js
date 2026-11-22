@@ -64,11 +64,15 @@ async function yk(path, method = 'GET', body) {
 function cryptoId() { return require('crypto').randomUUID(); }
 
 // ---------- Telegram ----------
+// Из Yandex Cloud api.telegram.org недоступен, поэтому запросы идут через Google Apps Script (действие 'tg').
 async function tg(method, params) {
-  const r = await fetch(`https://api.telegram.org/bot${E.TG_TOKEN}/${method}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params),
-  });
-  return r.json().catch(() => ({}));
+  if (E.TG_DIRECT === '1') {
+    const r = await fetch(`https://api.telegram.org/bot${E.TG_TOKEN}/${method}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params),
+    });
+    return r.json().catch(() => ({}));
+  }
+  return sheet('tg', { token: E.TG_TOKEN, method, params });
 }
 const send = (chat_id, text, extra = {}) => tg('sendMessage', { chat_id, text, parse_mode: 'HTML', disable_web_page_preview: true, ...extra });
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -261,15 +265,30 @@ module.exports.handler = async function (event) {
     if (r === 'pay' && event.httpMethod === 'POST') return await createPayment(event);
     if (r === 'yk') return await yookassaHook(event);
     if (r === 'tg') return await telegramHook(event);
+    if (r === 'diag') {                                    // проверка доступа к внешним сервисам (без секретов)
+      const ping = async (name, url) => {
+        const t = Date.now();
+        try { const x = await fetch(url, { signal: AbortSignal.timeout(6000) }); return `${name}: HTTP ${x.status}, ${Date.now() - t} мс`; }
+        catch (e) { return `${name}: ОШИБКА ${e.name} ${e.cause?.code || e.message}`; }
+      };
+      const out = await Promise.all([
+        ping('telegram', 'https://api.telegram.org/'),
+        tg('getMe', {}).then(x => 'telegram через Google: ' + (x.ok ? '@' + x.result.username : JSON.stringify(x).slice(0, 120))),
+        ping('yookassa', 'https://api.yookassa.ru/v3/'),
+        ping('google', E.SHEET_URL || 'https://script.google.com/'),
+      ]);
+      return reply(200, { out, token_set: !!E.TG_TOKEN, yk_secret_set: !!E.YK_SECRET });
+    }
     if (r === 'setup') {                                   // подключает вебхук бота; секрет выводится из токена
       const w = await tg('setWebhook', { url: `${E.FUNC_URL}?r=tg`, secret_token: TG_SECRET(), allowed_updates: ['message'], drop_pending_updates: true });
       await tg('setMyCommands', { commands: [{ command: 'start', description: 'Меню курса' }] });
-      return reply(200, { webhook: w.ok ? 'подключён' : w.description, yookassa_shop: E.YK_SHOP_ID || 'не задан', sheet: E.SHEET_URL ? 'задана' : 'не задана', admin: E.ADMIN_CHAT_ID || 'не задан', channel: E.CHANNEL_MAIN || 'не задан' });
+      const info = await tg('getWebhookInfo', {});
+      return reply(200, { webhook: w.ok ? 'подключён' : w.description, info: info.result, yookassa_shop: E.YK_SHOP_ID || 'не задан', sheet: E.SHEET_URL ? 'задана' : 'не задана', admin: E.ADMIN_CHAT_ID || 'не задан', channel: E.CHANNEL_MAIN || 'не задан' });
     }
     return reply(200, { ok: true, service: 'darkwood' });
   } catch (e) {
     console.log('fatal', e.stack || e.message);
-    return reply(r === 'pay' ? 500 : 200, { error: 'server error' });
+    return reply(r === 'pay' ? 500 : 200, { error: 'server error', detail: r === 'pay' ? undefined : `${e.name}: ${e.cause?.code || e.message}`.slice(0, 200) });
   }
 };
 
