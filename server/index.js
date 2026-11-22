@@ -11,7 +11,7 @@
 //   TG_SECRET                       — любая длинная строка, защищает вебхук бота
 //   BOT_USERNAME                    — имя бота без @
 //   ADMIN_CHAT_ID                   — чат Юли (куда приходят покупки, ДЗ и вопросы)
-//   CHANNEL_MAIN, CHANNEL_EXTRA     — id закрытых каналов (-100...)
+//   CHANNEL_MAIN                    — id закрытого канала курса (-100...)
 //   SHEET_URL, SHEET_KEY            — веб-приложение Google Apps Script и его ключ
 //   SITE_URL                        — https://hulijuli.com
 
@@ -167,13 +167,13 @@ async function issueAccess(chatId, from, pid) {
   const plan = PLANS[p.metadata?.plan] || PLANS.self;
   const expire = Math.floor(Date.now() / 1000) + 24 * 3600;
   const links = [];
-  for (const [ch, title] of [[E.CHANNEL_MAIN, 'Курс DARK WOOD'], [E.CHANNEL_EXTRA, 'Дополнительный канал']]) {
+  for (const [ch, title] of [[E.CHANNEL_MAIN, 'Закрытый канал DARK WOOD']]) {
     if (!ch) continue;
     const r = await tg('createChatInviteLink', { chat_id: ch, member_limit: 1, expire_date: expire, name: `${plan.name} ${from.id}`.slice(0, 32) });
     if (r.ok) links.push(`<a href="${r.result.invite_link}">${title}</a>`);
   }
   let text = `Добро пожаловать в DARK WOOD 🖤\nТвой тариф: <b>${plan.name}</b>\n\n`;
-  text += links.length ? `Твои личные ссылки (действуют 24 часа, по одной на человека):\n${links.join('\n')}` : 'Ссылки на каналы сейчас недоступны — Юля пришлёт их вручную.';
+  text += links.length ? `Твоя личная ссылка (действует 24 часа, только для тебя):\n${links.join('\n')}` : 'Ссылка на канал сейчас недоступна — Юля пришлёт её вручную.';
   if (plan.feedback) text += `\n\nВ твоём тарифе есть ${HW_LIMIT} проверки домашних заданий и ${SUPPORT_DAYS} дней обратной связи. Задание сдаётся кнопкой «📝 Сдать домашнее задание».`;
   if (p.metadata?.plan === 'mentor') text += '\n\nДва созвона в Zoom Юля согласует с тобой отдельно.';
   await send(chatId, text, { reply_markup: MENU });
@@ -223,7 +223,7 @@ async function telegramHook(event) {
   }
   if (text === '❓ Вопрос по обучению') { await send(chatId, ASK_Q, { reply_markup: { force_reply: true } }); return reply(200, {}); }
   if (text === '📖 Как устроено обучение') {
-    await send(chatId, 'Как всё устроено 🖤\n\n1. Все 22 темы — в закрытом канале курса, учишься в своём ритме.\n2. Дополнительный канал пополняется каждый месяц.\n3. Доступ бессрочный.\n4. В FEEDBACK и MENTOR — 3 проверки ДЗ и 30 дней обратной связи. ДЗ сдаётся здесь, кнопкой «📝 Сдать домашнее задание».\n5. В MENTOR — 2 созвона в Zoom по 45 минут.', { reply_markup: MENU });
+    await send(chatId, 'Как всё устроено 🖤\n\n1. Все 22 темы — в закрытом канале курса, учишься в своём ритме.\n2. Канал пополняется новыми материалами каждый месяц.\n3. Доступ бессрочный.\n4. В FEEDBACK и MENTOR — 3 проверки ДЗ и 30 дней обратной связи. ДЗ сдаётся здесь, кнопкой «📝 Сдать домашнее задание».\n5. В MENTOR — 2 созвона в Zoom по 45 минут.', { reply_markup: MENU });
     return reply(200, {});
   }
 
