@@ -80,13 +80,17 @@ const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&
 // ---------- Google Таблица (Apps Script) ----------
 async function sheet(action, data = {}) {
   if (!E.SHEET_URL) return {};
-  try {
-    const r = await fetch(E.SHEET_URL, {
-      method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, ...data }),
-    });
-    return await r.json();
-  } catch (e) { console.log('sheet error', action, e.message); return { error: e.message }; }
+  let last;
+  for (let i = 0; i < 3; i++) {                       // до 3 попыток: связь с Google иногда обрывается
+    try {
+      const r = await fetch(E.SHEET_URL, {
+        method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, ...data }),
+      });
+      return await r.json();
+    } catch (e) { last = e; console.log('sheet error', action, i, e.message); await new Promise(r => setTimeout(r, 400)); }
+  }
+  return { error: last?.message || 'sheet failed' };
 }
 
 // ---------- 1. Создание платежа ----------
@@ -109,25 +113,24 @@ async function createPayment(event) {
     description: `Онлайн-курс DARK WOOD, тариф ${plan.name}`,
     metadata: { plan: b.plan, promo: pct ? promoCode : '', email, tg: tgUser, source },
   };
-  if ((E.RECEIPT || 'npd') === 'npd') {
-    payload.receipt = {
-      customer: { email },
-      items: [{ description: `Онлайн-курс DARK WOOD, тариф ${plan.name}`, quantity: 1, amount: { value: amount, currency: 'RUB' }, vat_code: 1 }],
-    };
-  }
+  // Чек 54-ФЗ («Чеки от ЮKassa»): услуга, полный расчёт, без НДС. Формат «для самозанятых» ЮKassa отключила 29.12.2025.
+  const item = { description: `Онлайн-курс DARK WOOD, тариф ${plan.name}`, quantity: 1, amount: { value: amount, currency: 'RUB' },
+    vat_code: Number(E.VAT_CODE || 1), payment_mode: 'full_payment', payment_subject: 'service', measure: 'piece' };
+  const variants = (E.RECEIPT || 'on') === 'none' ? [null] : [
+    { customer: { email }, items: [item] },
+    { customer: { email }, items: [{ ...item, measure: undefined }] },            // на случай кассы без ФФД 1.2
+  ];
   try {
-    let p;
-    try { p = await yk('/payments', 'POST', payload); }
-    catch (e) {
-      if (payload.receipt && e.status === 400) {           // если чеки не включены в ЛК — пробуем без чека
-        delete payload.receipt; p = await yk('/payments', 'POST', payload);
-        if (E.ADMIN_CHAT_ID) send(E.ADMIN_CHAT_ID, '⚠️ ЮKassa не приняла данные для чека. Проверь, включены ли «Чеки от ЮKassa». Чек по этой оплате пробей в «Мой налог» вручную.');
-      } else throw e;
+    let p, lastErr;
+    for (const rc of variants) {
+      try { p = await yk('/payments', 'POST', rc ? { ...payload, receipt: rc } : payload); break; }
+      catch (e) { lastErr = e; if (e.status !== 400) break; }
     }
+    if (!p) throw lastErr;
     return reply(200, { id: p.id, url: p.confirmation.confirmation_url, amount });
   } catch (e) {
     console.log('create payment error', e.message, JSON.stringify(e.data || {}));
-    return reply(502, { error: 'Не получилось создать платёж. Попробуй ещё раз через минуту.' });
+    return reply(502, { error: 'Не получилось создать платёж. Попробуй ещё раз через минуту.', detail: `${e.status || ''} ${e.data?.code || ''} ${e.data?.description || e.message || ''} ${e.data?.parameter || ''}`.trim().slice(0, 300) });
   }
 }
 
@@ -146,6 +149,7 @@ async function yookassaHook(event) {
   };
   const res = await sheet('add', row);
   if (res.duplicate) return reply(200, { ok: true });                     // повторное уведомление
+  if (res.error) return reply(500, { error: 'sheet' });                   // ЮKassa повторит уведомление позже
   if (E.ADMIN_CHAT_ID) {
     await send(E.ADMIN_CHAT_ID,
       `🖤 <b>Новая покупка DARK WOOD</b>\n\n` +
@@ -277,7 +281,10 @@ module.exports.handler = async function (event) {
         ping('yookassa', 'https://api.yookassa.ru/v3/'),
         ping('google', E.SHEET_URL || 'https://script.google.com/'),
       ]);
-      return reply(200, { out, token_set: !!E.TG_TOKEN, yk_secret_set: !!E.YK_SECRET });
+      let shop;
+      try { const me = await yk('/me'); shop = { account_id: me.account_id, test: me.test, fiscalization: me.fiscalization_enabled ?? me.fiscalization, methods: me.payment_methods, status: me.status }; }
+      catch (e) { shop = `ОШИБКА ${e.status} ${e.data?.code || ''} ${e.data?.description || e.message}`; }
+      return reply(200, { out, shop, token_set: !!E.TG_TOKEN, yk_secret_set: !!E.YK_SECRET });
     }
     if (r === 'setup') {                                   // подключает вебхук бота; секрет выводится из токена
       const w = await tg('setWebhook', { url: `${E.FUNC_URL}?r=tg`, secret_token: TG_SECRET(), allowed_updates: ['message'], drop_pending_updates: true });
